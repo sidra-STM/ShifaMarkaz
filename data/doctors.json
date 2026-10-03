@@ -1,0 +1,10 @@
+[
+  {"id":"d1","name":"Dr. Demo Khan","specialty":"General Physician","qualification":"MBBS","clinic":"DHQ Hospital Chitral","days":"Mon - Sat","hours":"9:00 AM - 1:00 PM","phone":"03XX-XXXXXXX","teleconsultation":false},
+  {"id":"d2","name":"Dr. Demo Amina","specialty":"Pediatrician","qualification":"MBBS, FCPS (Pediatrics)","clinic":"Private Clinic, Chitral Bazaar","days":"Mon, Wed, Fri","hours":"4:00 PM - 8:00 PM","phone":"03XX-XXXXXXX","teleconsultation":true},
+  {"id":"d3","name":"Dr. Demo Rahim","specialty":"Cardiologist","qualification":"MBBS, FCPS (Cardiology)","clinic":"DHQ Hospital Chitral","days":"Tue, Thu","hours":"10:00 AM - 2:00 PM","phone":"03XX-XXXXXXX","teleconsultation":true},
+  {"id":"d4","name":"Dr. Demo Zainab","specialty":"Gynecologist","qualification":"MBBS, FCPS (Gynecology)","clinic":"Women's Clinic, Chitral","days":"Mon - Fri","hours":"9:00 AM - 1:00 PM","phone":"03XX-XXXXXXX","teleconsultation":true},
+  {"id":"d5","name":"Dr. Demo Farid","specialty":"Dermatologist","qualification":"MBBS, MCPS (Dermatology)","clinic":"Private Clinic, Chitral Bazaar","days":"Sat, Sun","hours":"10:00 AM - 3:00 PM","phone":"03XX-XXXXXXX","teleconsultation":false},
+  {"id":"d6","name":"Dr. Demo Karim","specialty":"Orthopedic","qualification":"MBBS, FCPS (Orthopedics)","clinic":"DHQ Hospital Chitral","days":"Mon, Wed","hours":"9:00 AM - 12:00 PM","phone":"03XX-XXXXXXX","teleconsultation":false},
+  {"id":"d7","name":"Dr. Demo Sana","specialty":"ENT","qualification":"MBBS, FCPS (ENT)","clinic":"Private Clinic, Chitral Bazaar","days":"Tue, Thu, Sat","hours":"3:00 PM - 7:00 PM","phone":"03XX-XXXXXXX","teleconsultation":true},
+  {"id":"d8","name":"Dr. Demo Bilal","specialty":"General Physician","qualification":"MBBS","clinic":"Community Clinic, Booni Road","days":"Mon - Sat","hours":"2:00 PM - 6:00 PM","phone":"03XX-XXXXXXX","teleconsultation":true}
+]

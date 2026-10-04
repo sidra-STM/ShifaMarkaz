@@ -4,7 +4,7 @@
 
 > Explore doctor specialties, take a demo queue token, and follow the queue.
 
-Built by team **Builders** for the **Chitral AI Challenge 2026**
+Built by team **The Builders** for the **Chitral AI Challenge 2026**
 (HindukushSoft Technologies x Computer Science Department, University of Chitral).
 Theme: *Learn. Build. Showcase. Connect.*
 
@@ -23,32 +23,22 @@ In Chitral, many people:
 
 ## Our solution
 
-ShifaMarkaz connects four features into one flow:
+ShifaMarkaz has two connected sides:
 
-**Symptoms -> Gemini specialty suggestion -> demo doctor directory -> queue token -> live demo queue**
+**Patient side**
+- Describe symptoms and get a suggested specialty (guidance only, not a diagnosis).
+- Browse sample Chitral doctors and see when and where they are available.
+- Take a digital queue token and follow your turn live from your phone.
 
-### 1. Doctor directory
-Browse sample doctor listings with their specialty, qualification, clinic, sample visiting days and hours, and teleconsultation flag. Search by name or clinic, or filter by specialty. Each doctor card shows the current demo queue. These listings and details are not verified real clinic availability.
+**Clinic side**
+- Clinic staff open the dashboard and see the waiting patients.
+- They press "Call Next Patient" and the current token changes.
+- Every patient's queue screen updates within seconds, so patients wait less at the clinic.
 
-### 2. AI Health Navigator
-Gemini is the primary navigator: it receives the conversation and suggests **which type of doctor to see**. A valid Gemini API key and supported model must be configured for the intended AI experience. If a Gemini request temporarily fails, basic keyword rules provide a limited backup response. Matching sample doctors are shown with a **Get Token** button. This is a demo guide, not a clinical assessment.
+**Flow:** Symptoms -> AI suggests specialty -> Chitral doctors -> Digital token -> Live queue -> Clinic calls next patient
 
-### 3. Digital queue token
-The patient picks a sample doctor, enters a name and phone number, and joins that doctor's demo queue. This issues a queue token; it does not book a date or appointment time. The queue screen shows:
-
-- the patient's token,
-- the token now being served,
-- how many patients are ahead,
-- a rough demo wait estimate (10 minutes per patient ahead),
-- a live status: waiting, you're next, your turn, or token passed.
-
-The screen refreshes by itself every 3 seconds.
-
-### 4. Clinic dashboard
-The demo dashboard lets a user select a sample doctor, see the demo waiting list, and press **Call Next Patient**. The current token changes, and queue screens update on their next poll.
-
-### Doctor and clinic listing requests
-Doctors and clinics can submit a listing request from the home page. Requests are saved locally in `data/doctor-registration-requests.json` and are not added to the public directory automatically. The data folder is protected from direct browser access by Apache.
+### Doctor registration (early module)
+Doctors can submit a registration request from the footer link or at `doctor-register.php`. Submissions are saved as pending; nothing is published automatically. A secure admin panel for reviewing and approving registrations is planned for the future.
 
 ---
 
@@ -56,17 +46,18 @@ Doctors and clinics can submit a listing request from the home page. Requests ar
 
 | The AI does | The AI does NOT |
 |---|---|
-| Gemini interprets the conversation when correctly configured and reachable | Provide a verified clinical assessment |
-| Ask short follow-up questions | Guarantee medically correct advice |
+| Gemini interprets the conversation and selects an allowed specialty when correctly configured and reachable | Provide a verified clinical assessment |
+| Decide whether more information is needed | Guarantee medically correct advice |
 | Suggest an allowed specialty | Choose doctors outside the sample directory |
 
 Safety design:
 
 - **A limited emergency phrase check runs first.** Recognized phrases such as "chest pain" trigger an emergency message before Gemini is called. This is a prototype keyword check and cannot identify every emergency.
 - **Doctor choices come from the sample directory.** The server matches the selected specialty to `doctors.json`; Gemini does not supply doctor records.
-- **Specialties are allowlisted.** An unrecognized Gemini specialty defaults to General Physician.
+- **Specialties are allowlisted.** A response with an unrecognized specialty is rejected and the limited keyword backup is used.
+- **Displayed navigator wording is controlled by the app.** Gemini supplies a response type, an allowlisted specialty when appropriate, and a language choice. ShifaMarkaz generates the displayed questions, specialty guidance, and emergency wording; Gemini's free-text message is not shown.
 - **Fallback rules.** If Gemini cannot be reached or returns an error, basic keyword rules provide a limited backup so the demo can continue. They do not replace Gemini's intended navigation experience.
-- **AI output is not independently clinically verified.** Gemini is instructed not to diagnose or recommend medicines, but the prototype does not guarantee that every generated sentence follows those instructions.
+- **AI specialty suggestions are not independently clinically verified.** The prototype is not a diagnosis or a substitute for a clinician.
 - **The API key stays on the server** in `api/config.php`. It is never sent to the browser and is excluded from Git.
 
 ---
@@ -92,6 +83,7 @@ shifa/
 ├── token.php            Get a queue token
 ├── queue.php            Patient's live queue screen
 ├── dashboard.php        Clinic dashboard
+├── doctor-register.php  Doctor/clinic registration request form
 ├── includes/            Shared header and footer
 ├── css/style.css        Styles
 ├── js/                  Page scripts (doctors, navigator, token, queue, dashboard, registration)
@@ -123,13 +115,14 @@ shifa/
 - Windows, macOS or Linux
 - [XAMPP](https://www.apachefriends.org/) (only **Apache** is needed, not MySQL)
 - A Gemini API key from [Google AI Studio](https://aistudio.google.com/) for the AI Navigator
+- PHP's **cURL** and **mbstring** extensions enabled in XAMPP's `php.ini` (restart Apache after enabling them)
 
 ### Steps
 
 1. **Get the code** into XAMPP's web folder. Use the folder name `shifa`:
    ```text
    cd C:\xampp\htdocs
-   git clone https://github.com/YOUR-USERNAME/shifamarkaz.git shifa
+   git clone https://github.com/sidra-STM/ShifaMarkaz.git shifa
    ```
 2. **Create your private config.** Copy `api/config.example.php` to `api/config.php` and fill in your values:
    ```php
@@ -142,8 +135,10 @@ shifa/
    Model names change over time. If you get a "model not found" error, check which models your key can use in Google AI Studio.
 3. **Start Apache** in the XAMPP Control Panel.
 4. **Open** `http://localhost/shifa/` in your browser.
+5. Ensure `data/queues.json` is writable by Apache. The `data` directory must also be writable so doctor registration requests can be created.
 
 **Gemini setup is required for the intended AI Navigator experience.** If Gemini is not configured or a request fails, the app shows limited keyword-based backup guidance instead. Doctor records and queue activity remain demo data.
+The navigator labels whether each answer used Gemini or rule-based backup guidance. Before presenting, submit a sample symptom and confirm the Gemini label appears; a backup label means the key, model, network, or available API quota needs attention. Never present a backup response as a Gemini response.
 
 ### Demo tips
 
@@ -175,6 +170,7 @@ We want to be clear about what this prototype is and is not:
 ## Future work
 
 - Verified real doctor and clinic data, managed by the clinics themselves
+- Admin panel to verify and approve doctor registrations
 - Real database and secure staff login
 - Full Urdu and Khowar interface
 - SMS or WhatsApp alerts when a patient's turn is near

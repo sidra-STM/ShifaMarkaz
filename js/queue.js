@@ -1,15 +1,23 @@
 const params = new URLSearchParams(location.search);
 let doctorId = params.get('doctor');
 let token = params.get('token');
+let startAhead = null;
 const box = document.getElementById('box');
 let doctor = null;
 
 // "My Queue" menu link has no parameters, so use the saved ticket
-if (!doctorId || !token) {
-  try {
-    const saved = JSON.parse(localStorage.getItem('shifaTicket') || 'null');
-    if (saved) { doctorId = saved.doctor; token = saved.token; }
-  } catch (e) {}
+try {
+  const saved = JSON.parse(localStorage.getItem('shifaTicket') || 'null');
+  if (!doctorId || !token) {
+    if (saved) {
+      doctorId = saved.doctor;
+      token = saved.token;
+      startAhead = saved.startAhead;
+    }
+  } else if (saved && saved.doctor === doctorId && String(saved.token) === String(token)) {
+    startAhead = saved.startAhead;
+  }
+} catch (e) {
 }
 
 const messages = {
@@ -22,7 +30,11 @@ const messages = {
 async function update() {
   try {
     const s = await getJSON(`api/queue-status.php?doctor=${encodeURIComponent(doctorId)}&token=${encodeURIComponent(token)}`);
-    const pct = Math.min(100, Math.round((s.current / s.yourToken) * 100));
+    const pct = s.status === 'serving'
+      ? 100
+      : Number.isFinite(startAhead) && startAhead > 0
+        ? Math.max(0, Math.min(100, Math.round(((startAhead - s.ahead) / startAhead) * 100)))
+        : 0;
     box.innerHTML = `
       <div class="card">
         <h3>${doctor ? esc(doctor.name) : ''}</h3>

@@ -42,14 +42,19 @@ document.getElementById('callNext').addEventListener('click', async () => {
     if (!r.ok) msg.textContent = r.message;
     refresh();
   } catch (e) {
-    msg.textContent = e.message;
+    msg.textContent = 'Could not call the next patient. Please try again.';
   }
 });
 
 document.getElementById('resetBtn').addEventListener('click', async () => {
   if (!confirm('Reset the demo queue for this doctor?')) return;
-  await postJSON('api/reset.php', { doctor: doctorId });
-  refresh();
+  msg.textContent = '';
+  try {
+    await postJSON('api/reset.php', { doctor: doctorId });
+    refresh();
+  } catch (e) {
+    msg.textContent = 'Could not reset the demo queue. Please try again.';
+  }
 });
 
 init();

@@ -21,6 +21,13 @@ function setBusy(busy) {
   });
 }
 
+function sourceLabel(source) {
+  const label = source === 'gemini'
+    ? 'Answered by Gemini AI'
+    : 'Backup mode (AI unavailable)';
+  return `<p class="disclaimer">${label}</p>`;
+}
+
 function showResult(r) {
   const docs = r.doctors.map(d => `
     <div class="mini">
@@ -31,7 +38,7 @@ function showResult(r) {
     <p>${esc(r.message)}</p>
     <p class="specialty">Suggested specialty: ${esc(r.specialty)}</p>
     ${docs}
-    ${r.source === 'fallback' ? '<p class="disclaimer">The AI service is unavailable; showing basic backup guidance.</p>' : ''}
+    ${sourceLabel(r.source)}
     <p class="disclaimer">Guidance only. Not a diagnosis.</p>
     <p><a href="navigator.php">Start again</a></p>`);
 }
@@ -59,10 +66,7 @@ async function send(text) {
       finished = true;
       showResult(r);
     } else {
-      const fallbackNote = r.source === 'fallback'
-        ? '<p class="disclaimer">The AI service is unavailable; asking a basic follow-up question.</p>'
-        : '';
-      addBubble('bot', `${esc(r.message)}${fallbackNote}`);
+      addBubble('bot', `<p>${esc(r.message)}</p>${sourceLabel(r.source)}`);
     }
   } catch (e) {
     typing.remove();

@@ -65,7 +65,10 @@ $requests[] = [
     'contactName' => $registration['contactName'],
     'phone' => $registration['phone'],
     'email' => $email,
-    'submittedAt' => date(DATE_ATOM),
+    'status' => 'pending',
+    'createdAt' => date(DATE_ATOM),
+    'reviewedAt' => null,
+    'reviewNote' => '',
 ];
 $json = json_encode($requests, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 if ($json === false || !ftruncate($handle, 0) || !rewind($handle) || fwrite($handle, $json) !== strlen($json) || !fflush($handle)) {

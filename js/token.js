@@ -34,16 +34,23 @@ async function init() {
 
     document.getElementById('tokenForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const submitButton = e.currentTarget.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
       try {
         const r = await postJSON('api/take-token.php', {
           doctor: doctorId,
           name: document.getElementById('name').value,
           phone: document.getElementById('phone').value
         });
-        localStorage.setItem('shifaTicket', JSON.stringify({ doctor: doctorId, token: r.yourToken }));
+        localStorage.setItem('shifaTicket', JSON.stringify({
+          doctor: doctorId,
+          token: r.yourToken,
+          startAhead: r.ahead
+        }));
         location.href = `queue.php?doctor=${encodeURIComponent(doctorId)}&token=${r.yourToken}`;
       } catch (err) {
         document.getElementById('err').textContent = err.message;
+        submitButton.disabled = false;
       }
     });
   } catch (err) {

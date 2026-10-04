@@ -5,7 +5,7 @@ include 'includes/header.php';
 ?>
 <div class="container">
   <h1 class="page-title">Clinic Dashboard</h1>
-  <p class="page-sub"><span class="live"></span>Live. Updates every 3 seconds. Demo only, no login.</p>
+  <p class="page-sub"><span class="live"></span>Demo queue updates every 3 seconds. Sample data only; no clinic is connected and no login is required.</p>
 
   <div class="form">
     <label for="doctorSelect">Doctor</label>

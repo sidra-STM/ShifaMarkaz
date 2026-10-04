@@ -16,6 +16,9 @@ function addBubble(cls, html) {
 function setBusy(busy) {
   sendBtn.disabled = busy || finished;
   input.disabled = busy || finished;
+  document.querySelectorAll('.example').forEach(button => {
+    button.disabled = busy || finished;
+  });
 }
 
 function showResult(r) {
@@ -28,6 +31,7 @@ function showResult(r) {
     <p>${esc(r.message)}</p>
     <p class="specialty">Suggested specialty: ${esc(r.specialty)}</p>
     ${docs}
+    ${r.source === 'fallback' ? '<p class="disclaimer">The AI service is unavailable; showing basic backup guidance.</p>' : ''}
     <p class="disclaimer">Guidance only. Not a diagnosis.</p>
     <p><a href="navigator.php">Start again</a></p>`);
 }
@@ -43,7 +47,9 @@ async function send(text) {
 
   try {
     const r = await postJSON('api/navigator.php', { messages });
-        console.log('NAV RESPONSE:', r);
+    if (!r || !['question', 'result', 'emergency'].includes(r.type) || typeof r.message !== 'string') {
+      throw new Error('The navigator returned an invalid response.');
+    }
     typing.remove();
     messages.push({ role: 'assistant', content: r.message });
     if (r.type === 'emergency') {
@@ -53,12 +59,16 @@ async function send(text) {
       finished = true;
       showResult(r);
     } else {
-      addBubble('bot', esc(r.message));
+      const fallbackNote = r.source === 'fallback'
+        ? '<p class="disclaimer">The AI service is unavailable; asking a basic follow-up question.</p>'
+        : '';
+      addBubble('bot', `${esc(r.message)}${fallbackNote}`);
     }
   } catch (e) {
     typing.remove();
     messages.pop();
-    addBubble('bot', 'Sorry, something went wrong. Please try again.');
+    input.value = text;
+    addBubble('bot', 'Sorry, I could not reach the navigator. Your message is still in the box; please try again.');
   }
   setBusy(false);
   if (!finished) input.focus();

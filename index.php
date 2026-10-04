@@ -6,15 +6,11 @@ include 'includes/header.php';
 <section class="hero">
   <div class="container">
     <span class="tag">Built for the people of Chitral</span>
-    <h1>Right doctor. Right time.<br>No long waiting.</h1>
-    <p>Describe your problem, find the right doctor in Chitral, and take a digital token from your phone.</p>
+    <h1>Not sure which doctor to see?</h1>
+    <p>Get a specialty suggestion, find a Chitral doctor, and take a queue token in minutes. Demo prototype. No appointment is booked.</p>
     <a class="btn" href="navigator.php">Describe your symptoms</a>
     <a class="btn btn-outline" href="doctors.php">Browse doctors</a>
   </div>
-  <svg class="mountains" viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 120 L0 80 L120 30 L200 70 L330 10 L450 75 L560 40 L680 85 L800 25 L920 80 L1040 45 L1200 90 L1200 120 Z" fill="#99f6e4" opacity="0.55"/>
-    <path d="M0 120 L0 100 L150 60 L260 95 L400 50 L520 100 L650 65 L780 105 L900 70 L1050 100 L1200 75 L1200 120 Z" fill="#0f766e" opacity="0.85"/>
-  </svg>
 </section>
 
 <section class="section">
@@ -23,7 +19,7 @@ include 'includes/header.php';
     <div class="steps">
       <div class="step"><div class="num">1</div><strong>Describe symptoms</strong><p>Tell the navigator what is wrong, in simple words.</p></div>
       <div class="step"><div class="num">2</div><strong>Get the right specialty</strong><p>We suggest which type of doctor to see. No diagnosis.</p></div>
-      <div class="step"><div class="num">3</div><strong>Pick a Chitral doctor</strong><p>See who is available, where and when.</p></div>
+      <div class="step"><div class="num">3</div><strong>Browse sample doctors</strong><p>Explore demo specialties, clinics, and example visiting hours.</p></div>
       <div class="step"><div class="num">4</div><strong>Get a digital token</strong><p>Watch your turn from your phone instead of waiting in a corridor.</p></div>
     </div>
   </div>
@@ -39,4 +35,32 @@ include 'includes/header.php';
     </div>
   </div>
 </section>
+
+<section class="section">
+  <div class="container narrow">
+    <h2>For doctors and clinics</h2>
+    <p class="page-sub">Submit your details to request a listing in the ShifaMarkaz directory. Submissions are saved for review and are not published automatically.</p>
+    <form id="registrationForm" class="card form">
+      <label for="clinicName">Doctor or clinic name</label>
+      <input id="clinicName" name="clinicName" type="text" required maxlength="100">
+
+      <label for="specialty">Specialty</label>
+      <input id="specialty" name="specialty" type="text" required maxlength="80">
+
+      <label for="contactName">Contact person</label>
+      <input id="contactName" name="contactName" type="text" required maxlength="80">
+
+      <label for="contactPhone">Phone number</label>
+      <input id="contactPhone" name="phone" type="tel" required maxlength="24">
+
+      <label for="contactEmail">Email (optional)</label>
+      <input id="contactEmail" name="email" type="email" maxlength="120">
+
+      <button class="btn" type="submit">Submit listing request</button>
+      <p id="registrationMessage" class="error" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+<script src="js/common.js"></script>
+<script src="js/register.js"></script>
 <?php include 'includes/footer.php'; ?>

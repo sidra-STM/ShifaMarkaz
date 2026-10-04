@@ -1,6 +1,8 @@
 <?php
 require 'helpers.php';
-$config = require __DIR__ . '/config.php';
+$configFile = __DIR__ . '/config.php';
+$config = is_file($configFile) ? require $configFile : [];
+if (!is_array($config)) jsonOut(['error' => 'Invalid navigator configuration'], 500);
 
 $in = json_decode(file_get_contents('php://input'), true) ?: [];
 $clean = [];
@@ -75,19 +77,29 @@ function callGemini($config, $messages, $specialties, $forceResult) {
         'generationConfig' => ['responseMimeType' => 'application/json', 'temperature' => 0.3]
     ];
 
-    $ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent");
-    curl_setopt_array($ch, [
-        CURLOPT_POST => true,
-        CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'x-goog-api-key: ' . $key],
-        CURLOPT_POSTFIELDS => json_encode($body),
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 20,
-        CURLOPT_SSL_VERIFYPEER => false // local XAMPP prototype only (fixes certificate error on Windows)
-    ]);
-    $res = curl_exec($ch);
-    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $err = curl_error($ch);
-    curl_close($ch);
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
+    $payload = json_encode($body);
+    $res = false;
+    $code = 0;
+    $err = '';
+    for ($attempt = 0; $attempt < 2; $attempt++) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'x-goog-api-key: ' . $key],
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 20,
+            CURLOPT_SSL_VERIFYPEER => false // local XAMPP prototype only (fixes certificate error on Windows)
+        ]);
+        $res = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        if ($res !== false && !in_array($code, [429, 500, 502, 503, 504], true)) break;
+        if ($attempt === 0) usleep(500000);
+    }
 
     if ($res === false) return [null, 'Network error: ' . $err];
     if ($code !== 200) return [null, 'Gemini HTTP ' . $code];

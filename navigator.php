@@ -5,7 +5,7 @@ include 'includes/header.php';
 ?>
 <div class="container narrow">
   <h1 class="page-title">AI Health Navigator</h1>
-  <p class="page-sub">Describe your problem. I will suggest which type of doctor to see. I do not diagnose or prescribe.</p>
+  <p class="page-sub">Gemini provides the intended specialty suggestion. If a request fails, limited keyword-based backup guidance is used. This is not a diagnosis or medical advice.</p>
 
   <div class="chips">
     <button class="chip example" data-text="My child has fever and cough since yesterday">Child has fever and cough</button>
